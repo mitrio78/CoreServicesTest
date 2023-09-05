@@ -11,6 +11,8 @@ import Foundation
 
 public final class StorageService: StorageServiceProtocol {
 
+    public init() {}
+
     // MARK: - Private Properties
 
     private var userDefaults = UserDefaults.standard

@@ -10,6 +10,8 @@ import UIKit
 
 public final class NetworkService: NetworkServiceProtocol {
 
+    public init() {}
+
     // MARK: - Methods
 
     public func loadData(urlString: String, completion: ((Data?) -> Void)?) {
