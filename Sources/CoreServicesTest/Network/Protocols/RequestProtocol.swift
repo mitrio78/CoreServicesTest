@@ -10,14 +10,15 @@ import Foundation
 // MARK: - RequestDataProtocol
 
 public protocol RequestDataProtocol {
-    var scheme: Scheme { get }
-    var baseURL: String { get }
+    var scheme: Scheme? { get }
+    var baseURL: String? { get }
     var port: Int? { get }
     var urlPath: String { get }
     var method: HTTPMethod { get }
     var headers: [String: String]? { get set }
     var queryItems: [URLQueryItem]? { get }
     var bodyParams: Encodable? { get }
+    var forceURLString: String? { get }
 }
 
 // MARK: - RequestDataProtocol
@@ -27,16 +28,30 @@ public extension RequestDataProtocol {
 
         // MARK: - build URL
 
-       var urlComponents = URLComponents()
-       urlComponents.scheme = scheme.rawValue
-       urlComponents.host = baseURL
-       urlComponents.path = urlPath
+       var url: URL
 
-       if let port {
-           urlComponents.port = port
-       }
+       if let forceURLString, !forceURLString.isEmpty {
+           guard let forcedUrl = URL(string: forceURLString) else {
+               return nil
+           }
 
-       guard let url = urlComponents.url else {
+           url = forcedUrl
+       } else if let scheme, let baseURL {
+           var urlComponents = URLComponents()
+           urlComponents.scheme = scheme.rawValue
+           urlComponents.host = baseURL
+           urlComponents.path = urlPath
+
+           if let port {
+               urlComponents.port = port
+           }
+
+           guard let newUrl = urlComponents.url else {
+               return nil
+           }
+
+           url = newUrl
+       } else {
            return nil
        }
 
