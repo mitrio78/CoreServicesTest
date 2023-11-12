@@ -14,7 +14,7 @@ public final class NetworkService: NetworkServiceProtocol {
 
     // MARK: - Methods
 
-    public func performRequest(request: RequestDataProtocol) async throws -> (Data, URLResponse, URLRequest) {
+    public func performRequest<Response: Decodable>(request: RequestDataProtocol) async throws -> (Response, Data, URLResponse) {
         let urlRequest: URLRequest
 
         do {
@@ -30,8 +30,14 @@ public final class NetworkService: NetworkServiceProtocol {
         let session = request.createSession()
 
         do {
-            let (data, response) = try await session.performDataTask(with: urlRequest)
-            return (data, response, urlRequest)
+            let (data, urlResponse) = try await session.performDataTask(with: urlRequest)
+
+            do {
+                let response = try JSONDecoder().decode(Response.self, from: data)
+                return (response, data, urlResponse)
+            } catch {
+                throw error
+            }
         } catch {
             throw error
         }
