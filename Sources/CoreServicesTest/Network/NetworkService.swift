@@ -9,9 +9,15 @@ import UIKit
 // MARK: - Network API Service
 
 public struct ResponseModel {
-    var response: Decodable?
-    var data: Data?
-    var urlResponse: URLResponse
+    public var response: Decodable?
+    public var data: Data?
+    public var urlResponse: URLResponse
+
+    public init(response: Decodable? = nil, data: Data? = nil, urlResponse: URLResponse) {
+        self.response = response
+        self.data = data
+        self.urlResponse = urlResponse
+    }
 }
 
 public final class NetworkService: NetworkServiceProtocol {
