@@ -8,13 +8,40 @@ import UIKit
 
 // MARK: - Network API Service
 
+public struct ResponseModel {
+    var response: Decodable?
+    var data: Data?
+    var urlResponse: URLResponse
+}
+
 public final class NetworkService: NetworkServiceProtocol {
 
     public init() { }
 
     // MARK: - Methods
 
-    public func performRequest<Response: Decodable>(request: RequestDataProtocol) async throws -> (Response, Data, URLResponse) {
+    public func makeRequest<Response: Decodable>(request: RequestDataProtocol, responseType: Response.Type?) async throws -> ResponseModel {
+        do {
+            let (response, data) = try await performRequest(request: request)
+            var model = ResponseModel(urlResponse: response)
+
+            if let responseType {
+                do {
+                    let response = try JSONDecoder().decode(responseType, from: data)
+                    model.response = response
+                } catch {
+                    throw error
+                }
+            } else {
+                model.data = data
+            }
+            return model
+        } catch {
+            throw error
+        }
+    }
+
+    func performRequest(request: RequestDataProtocol) async throws -> (response: URLResponse, data: Data) {
         let urlRequest: URLRequest
 
         do {
@@ -31,13 +58,7 @@ public final class NetworkService: NetworkServiceProtocol {
 
         do {
             let (data, urlResponse) = try await session.performDataTask(with: urlRequest)
-
-            do {
-                let response = try JSONDecoder().decode(Response.self, from: data)
-                return (response, data, urlResponse)
-            } catch {
-                throw error
-            }
+            return (urlResponse, data)
         } catch {
             throw error
         }

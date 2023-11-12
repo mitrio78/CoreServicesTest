@@ -10,5 +10,5 @@ import UIKit
 // MARK: - NetworkServiceProtocol
 
 public protocol NetworkServiceProtocol {
-    func performRequest<Response: Decodable>(request: RequestDataProtocol) async throws -> (Response, Data, URLResponse)
+    func makeRequest<Response: Decodable>(request: RequestDataProtocol, responseType: Response.Type?) async throws -> ResponseModel
 }
