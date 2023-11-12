@@ -15,8 +15,6 @@ public final class NetworkService: NetworkServiceProtocol {
     // MARK: - Methods
 
     public func performRequest(request: RequestDataProtocol) async throws -> (Data, URLResponse, URLRequest) {
-        let configuration = URLSessionConfiguration.default
-
         let urlRequest: URLRequest
 
         do {
