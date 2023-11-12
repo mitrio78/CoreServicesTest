@@ -8,40 +8,28 @@ import UIKit
 
 // MARK: - Network API Service
 
-public struct ResponseModel {
-    public var response: Decodable?
-    public var data: Data?
-    public var urlResponse: URLResponse
-
-    public init(response: Decodable? = nil, data: Data? = nil, urlResponse: URLResponse) {
-        self.response = response
-        self.data = data
-        self.urlResponse = urlResponse
-    }
-}
-
 public final class NetworkService: NetworkServiceProtocol {
 
     public init() { }
 
     // MARK: - Methods
 
-    public func makeRequest<Response: Decodable>(request: RequestDataProtocol, responseType: Response.Type?) async throws -> ResponseModel {
-        do {
-            let (response, data) = try await performRequest(request: request)
-            var model = ResponseModel(urlResponse: response)
+    public func makeDataRequest(request: RequestDataProtocol) async throws -> Data {
+        let (_, data) = try await performRequest(request: request)
+        return data
+    }
 
-            if let responseType {
-                do {
-                    let response = try JSONDecoder().decode(responseType, from: data)
-                    model.response = response
-                } catch {
-                    throw error
-                }
-            } else {
-                model.data = data
+    public func makeRequest<Response: Decodable>(request: RequestDataProtocol, responseType: Response.Type) async throws -> Response {
+        do {
+            let (_, data) = try await performRequest(request: request)
+
+            do {
+                let response = try JSONDecoder().decode(responseType, from: data)
+                return response
+            } catch {
+                throw error
             }
-            return model
+
         } catch {
             throw error
         }
