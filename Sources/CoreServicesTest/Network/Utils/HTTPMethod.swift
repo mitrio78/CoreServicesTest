@@ -8,6 +8,9 @@
 // MARK: - HTTPMethod
 
 public enum HTTPMethod: String {
-    case get = "GET"
-    case post = "POST"
+    case get
+    case post
+    case put
+    case delete
+    case patch
 }

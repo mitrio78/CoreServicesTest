@@ -10,12 +10,5 @@ import UIKit
 // MARK: - NetworkServiceProtocol
 
 public protocol NetworkServiceProtocol {
-
-    func loadData(urlString: String, completion: ((Data?) -> Void)?)
-
-    func getSearchResults<Response: Decodable>(
-        _ type: Response.Type,
-        searchParams: SearchParametersProtocol,
-        completion: @escaping (Response?, Error?) -> Void
-    )
+    func performRequest(request: RequestDataProtocol) async throws -> (Data, URLResponse, URLRequest)
 }
