@@ -59,7 +59,7 @@ public extension RequestDataProtocol {
 
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = method.rawValue
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         // MARK: - add headers
 
@@ -100,8 +100,6 @@ public extension RequestDataProtocol {
 
     func createSession() -> URLSession {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 30
-
         return URLSession(configuration: configuration)
     }
 }
