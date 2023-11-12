@@ -16,7 +16,7 @@ public protocol RequestDataProtocol {
     var urlPath: String { get }
     var method: HTTPMethod { get }
     var headers: [String: String]? { get set }
-    var queryItems: [URLQueryItem]? { get }
+    var requestGetParams: [String: String]? { get set }
     var bodyParams: Encodable? { get }
     var forceURLString: String? { get }
 }
@@ -71,12 +71,18 @@ public extension RequestDataProtocol {
 
         // MARK: - check for queryItems
 
-        if let params = queryItems, !params.isEmpty {
-            if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) {
-                urlComponents.queryItems = params
-                urlRequest.url = urlComponents.url
-            }
-        }
+       if let params = requestGetParams,
+          !params.isEmpty,
+          var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) {
+           var queryItems: [URLQueryItem] = []
+
+           params.forEach { key, value in
+               queryItems.append(URLQueryItem(name: key, value: value))
+           }
+
+           urlComponents.queryItems = queryItems
+           urlRequest.url = urlComponents.url
+       }
 
         // MARK: - check for body
 
