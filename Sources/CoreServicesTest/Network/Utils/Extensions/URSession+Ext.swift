@@ -29,6 +29,7 @@ public extension URLSession {
 
                 continuation.resume(returning: (data, response))
             }
+            .resume()
         }
     }
 }
